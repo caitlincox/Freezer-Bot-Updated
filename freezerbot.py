@@ -5,7 +5,7 @@ from daqhats import mcc134, hat_list, HatIDs, TcTypes
 import tweepy
 
 ###### SET THESE VARIABLES
-SLEEP_MINUTES = 10          # every 20 minutes
+SLEEP_SECONDS = 10          # every 10 seconds
 FRIDGE_LABEL = 'fridge_a'   # set a label for your fridge
 CONSUMER_KEY = "XXX"        # change XXX to your Twitter Consumer Key
 CONSUMER_SECRET = "XXX"     # change XXX to your Twitter Consumer Secret
@@ -13,11 +13,12 @@ ACCESS_TOKEN = "XXX"        # change XXX to your Twitter Access Token
 ACCESS_SECRET = "XXX"       # change XXX to your Twitter Access Key
 #######
 
-#sleep_seconds = SLEEP_MINUTES * 60
-sleep_seconds = SLEEP_MINUTES * 1
+
 channel = 0
 tc_type = TcTypes.TYPE_T
 tweet = ""
+old_temp = 100.0
+old_tweet = ""
 
 # Find the MCC 134
 hats = hat_list(filter_by_id=HatIDs.MCC_134)
@@ -33,6 +34,7 @@ board = mcc134(hats[0].address)
 board.tc_type_write(channel, tc_type)
 
 while True:
+    error = True
     temperature = board.t_in_read(channel)
     if temperature == mcc134.OPEN_TC_VALUE:
         print('MC143 Error - Open')
@@ -44,11 +46,19 @@ while True:
         print('MC143 Error - Common mode')
         tweet = "Error - Common Mode"
     else:
+        error = False
         temp_val = "{:.2f}".format(temperature)
        # auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
        # auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
        # api = tweepy.API(auth)
        # api.update_status(status="%s is at %s" % (FRIDGE_LABEL, temp_val))
         tweet = temp_val
-    print(tweet) 
-    time.sleep(sleep_seconds)
+    if error:
+        if tweet != old_tweet:
+            print(tweet)
+            old_tweet = tweet
+    elif temperature >= old_temp + 3.0 or temperature <= old_temp - 3.0:
+        print(tweet) 
+        old_temp = temperature
+
+    time.sleep(SLEEP_SECONDS)
