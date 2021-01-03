@@ -31,7 +31,9 @@ old_tweet = ""
 
 def log(text):
     with open("/home/pi/freezercheck/freezerbot.log", "a") as f:
-        f.write(text + "\n")
+        today = datetime.datetime.today()
+        time_string = today.strftime("%m/%d/%Y, %H:%M:%S")
+        f.write(time_string + ": " + text + "\n")
 
 def sendTweet(text):
     log(text)
@@ -70,7 +72,6 @@ def printJokeMondayAtNoon():
     today = datetime.datetime.today()
     weekday = today.weekday()
     hour = today.time().hour
-    print("weekday =", weekday, ", hour =", hour)
     if weekday == 0 and hour == 12:
         # Tweet a random joke at noon on Monday.
         if not tweeted_joke:
