@@ -1,5 +1,6 @@
 # MinusEightyBaby Twitter Bot
 
+import socket
 import time, sys
 from daqhats import mcc134, hat_list, HatIDs, TcTypes
 import tweepy
@@ -20,13 +21,29 @@ tweet = ""
 old_temp = 100.0
 old_tweet = ""
 
+def myPrint(text):
+    with open("/home/pi/freezercheck/freezerbot.log", "a") as f:
+        f.write(text + "\n")
+
+# Tweet the current IP address.
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+while True:
+    try:
+        s.connect(("8.8.8.8", 80))
+        myPrint("My address is " + s.getsockname()[0])
+        s.close()
+        break
+    except:
+        myPrint("Failed to connect to internet... will try again soon.")
+        time.sleep(3.0)
+
 # Find the MCC 134
 hats = hat_list(filter_by_id=HatIDs.MCC_134)
 if not hats:
-    print('No MCC 134 found, quiting')
+    myPrint('No MCC 134 found, quiting')
     sys.exit()
 else:
-    print('Found MCC134')
+    myPrint('Found MCC134')
 
 board = mcc134(hats[0].address)
 
@@ -55,10 +72,11 @@ while True:
         tweet = temp_val
     if error:
         if tweet != old_tweet:
-            print(tweet)
+            myPrint(tweet)
             old_tweet = tweet
     elif temperature >= old_temp + 3.0 or temperature <= old_temp - 3.0:
-        print(tweet) 
+        myPrint(tweet) 
         old_temp = temperature
 
     time.sleep(SLEEP_SECONDS)
+
