@@ -37,13 +37,13 @@ while True:
     error = True
     temperature = board.t_in_read(channel)
     if temperature == mcc134.OPEN_TC_VALUE:
-        print('MC143 Error - Open')
+       # print('MC143 Error - Open')
         tweet = "Error - Open"
     elif temperature == mcc134.OVERRANGE_TC_VALUE:
-        print('MC143 Error - Over range')
+       # print('MC143 Error - Over range')
         tweet = "Error - Over range"
     elif temperature == mcc134.COMMON_MODE_TC_VALUE:
-        print('MC143 Error - Common mode')
+       # print('MC143 Error - Common mode')
         tweet = "Error - Common Mode"
     else:
         error = False
