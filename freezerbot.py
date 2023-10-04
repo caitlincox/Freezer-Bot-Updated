@@ -44,7 +44,7 @@ class Joke:
         "\n\nBy truncating it after the first three terms."),
 
         ("Why do biologists use the abbreviation MAT?"
-        "\n\nSaying the whole thing is a micro-annunciation test."
+        "\n\nBecause trying to say what it stands for is a micro-annunciation test."
         "\n\n (I'm well aware that this is the dumbest one yet, but YOU have the power to fix this."
         "Send me science jokes. It's never too late.)"),
 
